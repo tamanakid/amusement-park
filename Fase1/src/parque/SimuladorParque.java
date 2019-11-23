@@ -52,8 +52,8 @@ public class SimuladorParque
 		ControlDeAcceso controlDeAcceso = new ControlDeAcceso(aforo);
 		
 		// Instanciacion de atracciones
-		TiroACanasta tiroACanasta = new TiroACanasta(sillas, gestorPulseras); // SupervisiónPulseras
-		SillasVoladoras sillasVoladoras = new SillasVoladoras(canastas, gestorPulseras);
+		TiroACanasta tiroACanasta = new TiroACanasta(canastas, gestorPulseras); // SupervisiónPulseras
+		SillasVoladoras sillasVoladoras = new SillasVoladoras(sillas, gestorPulseras);
 		UsoAtracción[] usoAtracciones = { tiroACanasta, sillasVoladoras };
 		
 		
@@ -79,11 +79,15 @@ public class SimuladorParque
 			}
 		}
 		
+		supervisor.interrupt();
+		
+		/*
 		try {
-			supervisor.join();			
+			supervisor.join();
 		} catch (InterruptedException exception) {
 			System.out.println("InterruptedException");
 		}
+		*/
 		
 		
 	}

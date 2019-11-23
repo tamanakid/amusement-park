@@ -1,5 +1,9 @@
 package parque.atracciones;
 
+import java.util.Random;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import parque.pulseras.ControlPulseras;
 import parque.pulseras.Pulsera;
 
@@ -13,12 +17,25 @@ public class TiroACanasta
 implements UsoAtracción, SupervisiónConcurso
 {
 
+	private Random randomGenerator;
+	private int maxCanastas;
+	private Semaphore canastas;
+	private ControlPulseras controlPulseras;
+	private AtomicInteger recaudados;
+	private AtomicInteger regalados;
+	
 	/**
 	 * @param maxPuestos número de canastas que posee la atracción
 	 * @param cPulseras {@link parque.pulseras.ControlPulseras}
 	 */
 	public TiroACanasta ( int maxPuestos, ControlPulseras cPulseras )
 	{
+		this.randomGenerator = new Random();
+		this.maxCanastas = maxPuestos;
+		this.canastas = new Semaphore(maxPuestos);
+		this.controlPulseras = cPulseras;
+		this.recaudados = new AtomicInteger(0);
+		this.regalados = new AtomicInteger(0);
 	}
 
 	/* (non-Javadoc)
@@ -27,15 +44,44 @@ implements UsoAtracción, SupervisiónConcurso
 	@Override
 	public void usar ( Pulsera p ) throws InterruptedException
 	{
+		this.canastas.acquire();
+		System.out.println("Jugador entra en TiroACanasta");
+		this.recaudados.addAndGet(1);
+		
+		boolean fallo = encestarCanastas();
+		if (fallo) {
+			this.controlPulseras.restarTique(p);
+		} else {
+			this.controlPulseras.sumarTique(p);
+			this.regalados.addAndGet(2);
+		}
+		Thread.sleep(2000);
+
+		this.canastas.release();
 	}
 
+	
+	// Returns true if there is a miss
+	private boolean encestarCanastas() {
+		int intentos = 5;
+		boolean fallo = false;
+		while ((intentos > 0) && !fallo) {
+			int precision = randomGenerator.nextInt(10);
+			fallo = (precision < 3) ? true : false;
+			intentos--;
+		}
+		return fallo;
+	}
+
+	
+	
 	/* (non-Javadoc)
 	 * @see parque.atracciones.SupervisiónConcurso#tiquesRecaudados()
 	 */
 	@Override
 	public int tiquesRecaudados ()
 	{
-		return 0;
+		return this.recaudados.get();
 	}
 
 	/* (non-Javadoc)
@@ -44,7 +90,7 @@ implements UsoAtracción, SupervisiónConcurso
 	@Override
 	public int tiquesRegalados ()
 	{
-		return 0;
+		return this.regalados.get();
 	}
 
 	/* (non-Javadoc)
@@ -53,6 +99,6 @@ implements UsoAtracción, SupervisiónConcurso
 	@Override
 	public int clientesActuales ()
 	{
-		return 0;
+		return (this.maxCanastas - this.canastas.availablePermits());
 	}
 }

@@ -47,9 +47,14 @@ implements Runnable
 	public void run ()
 	{
 		try {
-			int sleepFor = randomGenerator.nextInt(5000) + 5000; // Simula duraciones distintas
+			// int sleepFor = randomGenerator.nextInt(5000) + 5000; // Simula duraciones distintas
 			this.usoAcceso.entrar();
-			Thread.sleep(sleepFor);
+			
+			while(this.usoPulseras.quedanTiques(this.pulsera)) {
+				this.usoAtracciones[0].usar(this.pulsera);
+			}
+			
+			// Thread.sleep(sleepFor);
 		} catch (InterruptedException exception) {
 			System.out.println("InterruptedException");
 		}

@@ -11,7 +11,7 @@ public class ControlDeAcceso
 implements SupervisiónAcceso, UsoAcceso
 {
 	
-	private int aforoMaximo;
+	private int capacidad;
 	private int aforoActual;
 	private int aforoHistorico;
 	
@@ -20,7 +20,7 @@ implements SupervisiónAcceso, UsoAcceso
 	 */
 	public ControlDeAcceso ( int aforo )
 	{
-		this.aforoMaximo = aforo;
+		this.capacidad = aforo;
 		this.aforoActual = 0;
 		this.aforoHistorico = 0;
 	}
@@ -32,12 +32,12 @@ implements SupervisiónAcceso, UsoAcceso
 	public void entrar () throws InterruptedException
 	{
 		synchronized(this) {
-			while (this.aforoActual >= this.aforoMaximo) {
+			while (this.aforoActual >= this.capacidad) {
 				this.wait();				
 			}
 			this.aforoActual++;
 		}
-		System.out.println("Un cliente ha entrado en el parque");
+		System.out.println("Un cliente ha entrado en el parque: " + this.aforoActual);
 	}
 
 	/* (non-Javadoc)
@@ -51,7 +51,7 @@ implements SupervisiónAcceso, UsoAcceso
 			this.aforoHistorico++;
 			this.notifyAll();
 		}
-		System.out.println("Un cliente ha salido del parque");
+		System.out.println("Un cliente ha salido del parque: " + this.aforoActual);
 	}
 
 	/* (non-Javadoc)

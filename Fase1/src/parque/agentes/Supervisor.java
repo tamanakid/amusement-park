@@ -47,17 +47,26 @@ implements Runnable
 	 */
 	@Override
 	public void run () {
-		for (int i = 0; i < 15; i++) {
+		// for (int i = 0; i < 40; i++) {
+		boolean isInterrupted = false;
+		int i = 0;
+		while(!isInterrupted) {
 			System.out.println("@time" + i);
 			System.out.println(" - Pulseras vendidas: "	+ sPulseras.pulserasVendidas());
 			System.out.println(" - Tiques vendidos: " 	+ sPulseras.tiquesVendidos());
 			System.out.println(" - Aforo actual: " 		+ sAcceso.clientesDentro());
 			System.out.println(" - Aforo historico: " 	+ sAcceso.clientesHanSalido());
+			System.out.println(" - Tiro a Canasta - Tiques Recaudados: " + sConcurso.tiquesRecaudados() );
+			System.out.println(" - Tiro a Canasta - Tiques Regalados: " + sConcurso.tiquesRegalados() );
+			System.out.println(" - Tiro a Canasta - Clientes Actuales: " + sConcurso.clientesActuales() );
+			i++;
 			
 			try {
 				Thread.sleep(1000);			
 			} catch (InterruptedException exception) {
-				System.out.println("InterruptedException");
+				// System.out.println("InterruptedException");
+				isInterrupted = true;
+				System.out.println("Finalizacion de ejecucion del supervisor");
 			}
 		}
 	}

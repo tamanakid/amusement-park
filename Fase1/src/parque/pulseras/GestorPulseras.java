@@ -2,6 +2,7 @@ package parque.pulseras;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -17,8 +18,8 @@ implements UsoPulseras, ControlPulseras, SupervisiónPulseras
 {
 	
 	private int maxTiquesPulsera;
-	private int totalTiquesVendidos;
-	private int totalPulserasVendidas;
+	private AtomicInteger totalTiquesVendidos;
+	private AtomicInteger totalPulserasVendidas;
 	private HashMap<Pulsera, Integer> pulseras;
 	private Random randomGenerator;
 
@@ -29,8 +30,8 @@ implements UsoPulseras, ControlPulseras, SupervisiónPulseras
 	{
 		this.randomGenerator = new Random();
 		this.maxTiquesPulsera = maxTiquesPulsera;
-		this.totalTiquesVendidos = 0;
-		this.totalPulserasVendidas = 0;
+		this.totalTiquesVendidos = new AtomicInteger(0);
+		this.totalPulserasVendidas = new AtomicInteger(0);
 		this.pulseras = new HashMap<Pulsera, Integer>();
 	}
 
@@ -40,17 +41,17 @@ implements UsoPulseras, ControlPulseras, SupervisiónPulseras
 	@Override
 	public Pulsera obtenerPulsera ()
 	{
-		synchronized(this) {
-			int tiques = randomGenerator.nextInt(this.maxTiquesPulsera) + 1;
-			System.out.println("GestorPulseras: Pulsera generada con " + tiques + " tiques");
-			Pulsera newPulsera = new Pulsera();
-			
-			this.totalTiquesVendidos += tiques;
-			this.totalPulserasVendidas++;
-			this.pulseras.put(newPulsera, tiques);
-			return newPulsera;
+		int tiques = randomGenerator.nextInt(this.maxTiquesPulsera) + 1;
+		System.out.println("GestorPulseras: Pulsera generada con " + tiques + " tiques");
+		Pulsera newPulsera = new Pulsera();
+		
+		this.totalTiquesVendidos.addAndGet(tiques);
+		this.totalPulserasVendidas.addAndGet(1);
+		synchronized(this.pulseras) {
+			this.pulseras.put(newPulsera, tiques);			
 		}
 		
+		return newPulsera;
 	}
 
 	/* (non-Javadoc)
@@ -59,8 +60,10 @@ implements UsoPulseras, ControlPulseras, SupervisiónPulseras
 	@Override
 	public void restarTique ( Pulsera p )
 	{
-		int valor = this.pulseras.get(p);
-		this.pulseras.put(p, valor - 1);
+		synchronized(this.pulseras) {
+			int valor = this.pulseras.get(p);
+			this.pulseras.put(p, valor - 1);			
+		}
 	}
 
 	/* (non-Javadoc)
@@ -69,8 +72,10 @@ implements UsoPulseras, ControlPulseras, SupervisiónPulseras
 	@Override
 	public void sumarTique ( Pulsera p )
 	{
-		int valor = this.pulseras.get(p);
-		this.pulseras.put(p, valor + 1);
+		synchronized(this.pulseras) {
+			int valor = this.pulseras.get(p);
+			this.pulseras.put(p, valor + 1);			
+		}
 	}
 
 	/* (non-Javadoc)
@@ -79,7 +84,7 @@ implements UsoPulseras, ControlPulseras, SupervisiónPulseras
 	@Override
 	public int tiquesVendidos ()
 	{
-		return this.totalTiquesVendidos;
+		return this.totalTiquesVendidos.get();
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +93,7 @@ implements UsoPulseras, ControlPulseras, SupervisiónPulseras
 	@Override
 	public int pulserasVendidas ()
 	{
-		return this.totalPulserasVendidas;
+		return this.totalPulserasVendidas.get();
 	}
 
 	/* (non-Javadoc)
