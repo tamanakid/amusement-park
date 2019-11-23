@@ -1,0 +1,18 @@
+Autor: Nicolás Villanueva
+
+La fase 1 meramente instancia los recursos mencionados: el Supervisor, los Clientes y el Gestor de Pulseras.
+
+
+
+Dados los siguientes argumentos: 10 - 5 - 100 - 10 - 10
+
+Se imprime el siguiente código en pantalla:
+
+		@0 - Pulseras vendidas: 0
+		@0 - Tiques vendidos: 0
+		GestorPulseras: Pulsera generada con 3 tiques
+		...
+		@1 - Pulseras vendidas: 10
+		@1 - Tiques vendidos: 33
+
+Debido a que se configuró una cantidad de Clientes mucho menor al aforo del parque, todas las pulseras son generadas al inicio del programa.
