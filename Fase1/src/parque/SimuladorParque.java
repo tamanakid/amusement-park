@@ -2,7 +2,7 @@ package parque;
 
 import parque.agentes.Supervisor;
 import parque.agentes.Cliente;
-// import parque.agentes.ControladorSillasVoladoras;
+import parque.agentes.ControladorSillasVoladoras;
 
 import parque.acceso.ControlDeAcceso;
 
@@ -59,12 +59,14 @@ public class SimuladorParque
 		
 		// Instanciacion de Agentes (Threads)
 		Thread supervisor;
-		// Thread controladorSillasVoladoras;
+		Thread controlador;
 		Thread[] clientes = new Thread[100];
 		
-		supervisor = new Thread(new Supervisor(gestorPulseras, tiroACanasta, sillasVoladoras, controlDeAcceso, clientesTotal)); // etc
-		
+		supervisor = new Thread(new Supervisor(gestorPulseras, tiroACanasta, sillasVoladoras, controlDeAcceso, clientesTotal));
 		supervisor.start();
+		
+		controlador = new Thread(new ControladorSillasVoladoras(sillasVoladoras));
+		controlador.start();
 		
 		for (int i = 0; i < clientesTotal; i++) {
 			clientes[i] = new Thread(new Cliente(gestorPulseras, usoAtracciones, controlDeAcceso));
@@ -80,6 +82,7 @@ public class SimuladorParque
 		}
 		
 		supervisor.interrupt();
+		// controlador.interrupt();
 		
 		/*
 		try {

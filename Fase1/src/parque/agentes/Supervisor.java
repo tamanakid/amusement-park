@@ -59,6 +59,9 @@ implements Runnable
 			System.out.println(" - Tiro a Canasta - Tiques Recaudados: " + sConcurso.tiquesRecaudados() );
 			System.out.println(" - Tiro a Canasta - Tiques Regalados: " + sConcurso.tiquesRegalados() );
 			System.out.println(" - Tiro a Canasta - Clientes Actuales: " + sConcurso.clientesActuales() );
+			System.out.println(" - Sillas Voladoras - Tiques Recaudados: " + sViajes.tiquesRecaudados());
+			System.out.println(" - Sillas Voladoras - Viajes Realizados: " + sViajes.viajesRealizados());
+			System.out.println(" - Sillas Voladoras - Clientes Actuales: " + sViajes.clientesActuales());
 			i++;
 			
 			try {
@@ -66,6 +69,7 @@ implements Runnable
 			} catch (InterruptedException exception) {
 				// System.out.println("InterruptedException");
 				isInterrupted = true;
+				this.sViajes.cerrarAtracción();
 				System.out.println("Finalizacion de ejecucion del supervisor");
 			}
 		}

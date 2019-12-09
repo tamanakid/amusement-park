@@ -1,0 +1,14 @@
+Autor: Nicolás Villanueva
+
+En la siguiente entrega se componen tanto los requisitos de la fase 2 como los de la fase 3 (Aun se revisaran con mas robustez)
+
+Dados los siguientes argumentos: 
+* total de clientes: 30
+* numero maximo de tiques: 5
+* aforo del parque: 20
+* numero de canastas: 5
+* numero de sillas: 5 (indiferente)
+
+Se observa que, segun vayan saliendo clientes, van entrando otros que esten afuera.
+
+Ademas, se monitorea la actividad del tiro a canasta, en el cual se tiene una probabilidad de ganar de 0.168.

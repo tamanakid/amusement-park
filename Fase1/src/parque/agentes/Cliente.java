@@ -46,12 +46,18 @@ implements Runnable
 	@Override
 	public void run ()
 	{
+		int walkToRide;
+		int nextRide;
+		
 		try {
 			// int sleepFor = randomGenerator.nextInt(5000) + 5000; // Simula duraciones distintas
 			this.usoAcceso.entrar();
 			
 			while(this.usoPulseras.quedanTiques(this.pulsera)) {
-				this.usoAtracciones[0].usar(this.pulsera);
+				walkToRide = this.randomGenerator.nextInt(2000) + 2000;
+				Thread.sleep(walkToRide);
+				nextRide = randomGenerator.nextInt(2);
+				this.usoAtracciones[nextRide].usar(this.pulsera);
 			}
 			
 			// Thread.sleep(sleepFor);
