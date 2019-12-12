@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 import parque.pulseras.ControlPulseras;
 import parque.pulseras.Pulsera;
@@ -91,12 +92,14 @@ implements UsoAtracción, ControlViajes, SupervisiónViajes
 	@Override
 	public void esperarSubida () throws InterruptedException
 	{
+		boolean isClientEntered = true;
+		
 		this.barrera = false;
 		this.cerrojo.lock();
 		this.puedeSubir.signalAll();
 		try {
-			while(this.sillasDisponibles.get() > 0) {
-				this.empezarViaje.await();
+			while((this.sillasDisponibles.get() > 0) && (isClientEntered || (this.sillasDisponibles.get() == this.maxPlazas))) {
+				isClientEntered = this.empezarViaje.await(5000, TimeUnit.MILLISECONDS);
 			}
 			this.barrera = true;
 		} finally {
