@@ -20,7 +20,7 @@ import parque.pulseras.Pulsera;
 public class SillasVoladoras
 implements UsoAtracción, ControlViajes, SupervisiónViajes
 {
-	private boolean cerrado;
+	private boolean cerrar;
 	private boolean barrera;
 	private int maxPlazas;
 	private int viajes;
@@ -39,7 +39,7 @@ implements UsoAtracción, ControlViajes, SupervisiónViajes
 	 */
 	public SillasVoladoras ( int maxPlazas, ControlPulseras cPulseras )
 	{
-		this.cerrado = false;
+		this.cerrar = false;
 		this.barrera = false;
 		this.maxPlazas = maxPlazas;
 		this.viajes = 0;
@@ -98,7 +98,7 @@ implements UsoAtracción, ControlViajes, SupervisiónViajes
 		this.cerrojo.lock();
 		this.puedeSubir.signalAll();
 		try {
-			while((this.sillasDisponibles.get() > 0) && (isClientEntered || (this.sillasDisponibles.get() == this.maxPlazas))) {
+			while((!this.cerrar) && (this.sillasDisponibles.get() > 0) && (isClientEntered || (this.sillasDisponibles.get() == this.maxPlazas))) {
 				isClientEntered = this.empezarViaje.await(5000, TimeUnit.MILLISECONDS);
 			}
 			this.barrera = true;
@@ -143,7 +143,7 @@ implements UsoAtracción, ControlViajes, SupervisiónViajes
 	@Override
 	public boolean debeCerrar ()
 	{
-		return this.cerrado;
+		return this.cerrar;
 	}
 
 	/* (non-Javadoc)
@@ -152,7 +152,7 @@ implements UsoAtracción, ControlViajes, SupervisiónViajes
 	@Override
 	public void cerrarAtracción ()
 	{
-		this.cerrado = true;
+		this.cerrar = true;
 	}
 
 	/* (non-Javadoc)

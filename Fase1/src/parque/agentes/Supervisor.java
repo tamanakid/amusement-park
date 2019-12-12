@@ -47,31 +47,38 @@ implements Runnable
 	 */
 	@Override
 	public void run () {
-		// for (int i = 0; i < 40; i++) {
-		boolean isInterrupted = false;
-		int i = 0;
-		while(!isInterrupted) {
-			System.out.println("@time" + i);
-			System.out.println(" - Pulseras vendidas: "	+ sPulseras.pulserasVendidas());
-			System.out.println(" - Tiques vendidos: " 	+ sPulseras.tiquesVendidos());
-			System.out.println(" - Aforo actual: " 		+ sAcceso.clientesDentro());
-			System.out.println(" - Aforo historico: " 	+ sAcceso.clientesHanSalido());
-			System.out.println(" - Tiro a Canasta - Tiques Recaudados: " + sConcurso.tiquesRecaudados() );
-			System.out.println(" - Tiro a Canasta - Tiques Regalados: " + sConcurso.tiquesRegalados() );
-			System.out.println(" - Tiro a Canasta - Clientes Actuales: " + sConcurso.clientesActuales() );
-			System.out.println(" - Sillas Voladoras - Tiques Recaudados: " + sViajes.tiquesRecaudados());
-			System.out.println(" - Sillas Voladoras - Viajes Realizados: " + sViajes.viajesRealizados());
-			System.out.println(" - Sillas Voladoras - Clientes Actuales: " + sViajes.clientesActuales());
-			i++;
-			
-			try {
-				Thread.sleep(1000);			
-			} catch (InterruptedException exception) {
-				// System.out.println("InterruptedException");
-				isInterrupted = true;
-				this.sViajes.cerrarAtracción();
-				System.out.println("Finalizacion de ejecucion del supervisor");
+		try {
+			int time = 0;
+			while(this.sAcceso.clientesHanSalido() < this.numClientes) {
+				this.printInfo(time);
+				Thread.sleep(1000);
+				time++;
 			}
+			
+			System.out.println("Todos los clientes han salido: Se cerrará el parque.");
+			this.sViajes.cerrarAtracción();
+			this.printInfo(time);
+			
+		} catch (InterruptedException exception) {
+			System.out.println("InterruptedException: Supervisor");
 		}
+		
+		System.out.println("Finalizacion de ejecución del supervisor.");
+	}
+	
+	
+	private void printInfo(int time) {
+		System.out.println("@time: " + time);
+		System.out.println(" - Pulseras vendidas: "	+ sPulseras.pulserasVendidas());
+		System.out.println(" - Tiques vendidos: " 	+ sPulseras.tiquesVendidos());
+		System.out.println(" - Aforo actual: " 		+ sAcceso.clientesDentro());
+		System.out.println(" - Aforo historico: " 	+ sAcceso.clientesHanSalido());
+		System.out.println(" - Tiro a Canasta - Tiques Recaudados: " + sConcurso.tiquesRecaudados() );
+		System.out.println(" - Tiro a Canasta - Tiques Regalados: " + sConcurso.tiquesRegalados() );
+		System.out.println(" - Tiro a Canasta - Clientes Actuales: " + sConcurso.clientesActuales() );
+		System.out.println(" - Sillas Voladoras - Tiques Recaudados: " + sViajes.tiquesRecaudados());
+		System.out.println(" - Sillas Voladoras - Viajes Realizados: " + sViajes.viajesRealizados());
+		System.out.println(" - Sillas Voladoras - Clientes Actuales: " + sViajes.clientesActuales());
+		
 	}
 }

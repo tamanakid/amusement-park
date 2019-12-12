@@ -46,26 +46,28 @@ implements UsoAtracción, SupervisiónConcurso
 	{
 		this.canastas.acquire();
 		System.out.println("Jugador entra en TiroACanasta");
+		this.controlPulseras.restarTique(p);
 		this.recaudados.addAndGet(1);
 		
 		boolean fallo = encestarCanastas();
-		if (fallo) {
-			this.controlPulseras.restarTique(p);
-		} else {
+		if (!fallo) {
+			this.controlPulseras.sumarTique(p);
 			this.controlPulseras.sumarTique(p);
 			this.regalados.addAndGet(2);
 		}
-		Thread.sleep(2000);
+
 
 		this.canastas.release();
 	}
 
 	
 	// Returns true if there is a miss
-	private boolean encestarCanastas() {
+	private boolean encestarCanastas() throws InterruptedException
+	{
 		int intentos = 5;
 		boolean fallo = false;
 		while ((intentos > 0) && !fallo) {
+			Thread.sleep(400);
 			int precision = randomGenerator.nextInt(10);
 			fallo = (precision < 3) ? true : false;
 			intentos--;

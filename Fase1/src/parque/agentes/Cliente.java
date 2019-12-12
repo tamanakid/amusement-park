@@ -35,8 +35,6 @@ implements Runnable
 		this.usoAtracciones = uAtracciones;
 		this.usoAcceso = uAcceso;
 		this.randomGenerator = new Random();
-		
-		this.pulsera = this.usoPulseras.obtenerPulsera();
 	}
 
 
@@ -50,7 +48,8 @@ implements Runnable
 		int nextRide;
 		
 		try {
-			// int sleepFor = randomGenerator.nextInt(5000) + 5000; // Simula duraciones distintas
+			this.pulsera = this.usoPulseras.obtenerPulsera();
+			
 			this.usoAcceso.entrar();
 			
 			while(this.usoPulseras.quedanTiques(this.pulsera)) {
@@ -60,10 +59,10 @@ implements Runnable
 				this.usoAtracciones[nextRide].usar(this.pulsera);
 			}
 			
-			// Thread.sleep(sleepFor);
+			this.usoAcceso.salir();
+
 		} catch (InterruptedException exception) {
 			System.out.println("InterruptedException");
 		}
-		this.usoAcceso.salir();
 	}
 }

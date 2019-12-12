@@ -28,14 +28,17 @@ implements Runnable
 	public void run ()
 	{
 		try {
+			this.control.esperarSubida();
 			while(!this.control.debeCerrar()) {
-				this.control.esperarSubida();
 				this.control.realizarViaje();
 				this.control.esperarBajada();
+				this.control.esperarSubida();
 			}
-			System.out.println("Sillas Voladoras cerradas");
+
 		} catch (InterruptedException exception) {
-			System.out.println("Controlador Sillas Voladoras interrumpido");
+			System.out.println("InterruptedException: Controlador Sillas Voladoras");
 		}
+		
+		System.out.println("Finalizacion de ejecución del controlador de sillas voladoras.");
 	}
 }

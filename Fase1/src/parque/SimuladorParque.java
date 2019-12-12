@@ -7,7 +7,6 @@ import parque.agentes.ControladorSillasVoladoras;
 import parque.acceso.ControlDeAcceso;
 
 import parque.pulseras.GestorPulseras;
-import parque.pulseras.Pulsera;
 
 import parque.atracciones.TiroACanasta;
 import parque.atracciones.SillasVoladoras;
@@ -37,61 +36,63 @@ public class SimuladorParque
 	public static void main ( String[] args ) {
 		
 		// Argumentos del CLI
-		int clientesTotal = Integer.parseInt(args[0]);
-		int maxTiquesPulsera = Integer.parseInt(args[1]);
-		int aforo = Integer.parseInt(args[2]);
-		int canastas = Integer.parseInt(args[3]);
-		int sillas = Integer.parseInt(args[4]);
-		
-		
-		// Instanciacion de elementos de gestión de Pulseras
-		GestorPulseras gestorPulseras = new GestorPulseras(maxTiquesPulsera);
-		Pulsera[] pulseras = new Pulsera[100]; // pendiente
-		
-		// Instanciacion de elementos de gestión de Acceso
-		ControlDeAcceso controlDeAcceso = new ControlDeAcceso(aforo);
-		
-		// Instanciacion de atracciones
-		TiroACanasta tiroACanasta = new TiroACanasta(canastas, gestorPulseras); // SupervisiónPulseras
-		SillasVoladoras sillasVoladoras = new SillasVoladoras(sillas, gestorPulseras);
-		UsoAtracción[] usoAtracciones = { tiroACanasta, sillasVoladoras };
-		
-		
-		// Instanciacion de Agentes (Threads)
-		Thread supervisor;
-		Thread controlador;
-		Thread[] clientes = new Thread[100];
-		
-		supervisor = new Thread(new Supervisor(gestorPulseras, tiroACanasta, sillasVoladoras, controlDeAcceso, clientesTotal));
-		supervisor.start();
-		
-		controlador = new Thread(new ControladorSillasVoladoras(sillasVoladoras));
-		controlador.start();
-		
-		for (int i = 0; i < clientesTotal; i++) {
-			clientes[i] = new Thread(new Cliente(gestorPulseras, usoAtracciones, controlDeAcceso));
-			clientes[i].start();
-		}
-		
-		for (int i = 0; i < clientesTotal; i++) {
-			try {
-				clientes[i].join();
-			} catch (InterruptedException exception) {
-				System.out.println("InterruptedException");
+		if (args.length != 5) {
+			System.out.println("Este programa necesita 5 argumentos para ejecutarse correctamente.");
+		} else {
+			int clientesTotal = Integer.parseInt(args[0]);
+			int maxTiquesPulsera = Integer.parseInt(args[1]);
+			int aforo = Integer.parseInt(args[2]);
+			int canastas = Integer.parseInt(args[3]);
+			int sillas = Integer.parseInt(args[4]);
+			
+			
+			// Instanciacion de elementos de gestión de Pulseras
+			GestorPulseras gestorPulseras = new GestorPulseras(maxTiquesPulsera);
+			
+			// Instanciacion de elementos de gestión de Acceso
+			ControlDeAcceso controlDeAcceso = new ControlDeAcceso(aforo);
+			
+			// Instanciacion de atracciones
+			TiroACanasta tiroACanasta = new TiroACanasta(canastas, gestorPulseras); // SupervisiónPulseras
+			SillasVoladoras sillasVoladoras = new SillasVoladoras(sillas, gestorPulseras);
+			UsoAtracción[] usoAtracciones = { tiroACanasta, sillasVoladoras };
+			
+			
+			// Instanciacion de Agentes (Threads)
+			Thread supervisor;
+			Thread controlador;
+			Thread[] clientes = new Thread[100];
+			
+			supervisor = new Thread(new Supervisor(gestorPulseras, tiroACanasta, sillasVoladoras, controlDeAcceso, clientesTotal));
+			supervisor.start();
+			
+			controlador = new Thread(new ControladorSillasVoladoras(sillasVoladoras));
+			controlador.start();
+			
+			for (int i = 0; i < clientesTotal; i++) {
+				clientes[i] = new Thread(new Cliente(gestorPulseras, usoAtracciones, controlDeAcceso));
+				clientes[i].start();
 			}
+			
+			for (int i = 0; i < clientesTotal; i++) {
+				try {
+					clientes[i].join();
+				} catch (InterruptedException exception) {
+					System.out.println("InterruptedException: Cliente " + i);
+				}
+			}
+			
+			
+			try {
+				controlador.join();
+				supervisor.join();
+			} catch (InterruptedException exception) {
+				System.out.println("InterruptedException: Controlador or Supervisor");
+			}
+			
+			System.out.println("\nFin del Simulador");
+			
+			
 		}
-		
-		supervisor.interrupt();
-		// controlador.interrupt();
-		
-		/*
-		try {
-			supervisor.join();
-		} catch (InterruptedException exception) {
-			System.out.println("InterruptedException");
-		}
-		*/
-		
-		
 	}
 }
